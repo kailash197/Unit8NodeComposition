@@ -24,4 +24,21 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
+include_directories(include)
+
+add_library(moverobot_component SHARED src/moverobot_component.cpp)
+target_compile_definitions(moverobot_component PRIVATE "COMPOSITION_BUILDING_DLL")
+ament_target_dependencies(moverobot_component
+  "rclcpp"
+  "rclcpp_components"
+  "geometry_msgs")
+rclcpp_components_register_nodes(moverobot_component "my_components::MoveRobot")
+set(node_plugins "${node_plugins}my_components::MoveRobot;$<TARGET_FILE:moverobot_component>\n")
+
+install(TARGETS
+  moverobot_component
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin)
+
 ament_package()
